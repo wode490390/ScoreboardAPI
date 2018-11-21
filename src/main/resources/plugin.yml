@@ -4,4 +4,3 @@ version: 1.0
 main: gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI
 author: CreeperFace
 description: Simple ScoreboardAPI for GameTeam
-depend: ["KotlinLib"]
