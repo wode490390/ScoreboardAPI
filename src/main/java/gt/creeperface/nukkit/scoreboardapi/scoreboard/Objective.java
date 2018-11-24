@@ -65,6 +65,10 @@ public class Objective {
         return this.scores.get(id);
     }
 
+    public Long2ObjectOpenHashMap<Score> getAllScores() {
+        return this.scores;
+    }
+
     public void resetScore(long id) {
         Score score = this.scores.remove(id);
         this.renamed.remove(id);
@@ -72,6 +76,14 @@ public class Objective {
         if (score != null) {
             this.modified.add(id);
         }
+    }
+
+    public void resetAllScore() {
+        this.renamed.clear();
+        this.modified.clear();
+
+        this.modified.addAll(scores.keySet());
+        this.scores.clear();
     }
 
     public List<SetScorePacket> getChanges() {
