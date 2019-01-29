@@ -20,10 +20,10 @@ public class Objective {
         this.criteria = criteria;
     }
 
-    private Long2ObjectOpenHashMap<Score> scores = new Long2ObjectOpenHashMap<Score>();
+    private final Long2ObjectOpenHashMap<Score> scores = new Long2ObjectOpenHashMap<>();
 
-    private LongOpenHashSet modified = new LongOpenHashSet();
-    private LongOpenHashSet renamed = new LongOpenHashSet();
+    private final LongOpenHashSet modified = new LongOpenHashSet();
+    private final LongOpenHashSet renamed = new LongOpenHashSet();
 
     public boolean needResend = false;
 
@@ -88,12 +88,11 @@ public class Objective {
 
     public List<SetScorePacket> getChanges() {
         if (this.modified.isEmpty()) {
-            return new ArrayList<SetScorePacket>() {
-            };
+            return new ArrayList<SetScorePacket>() {};
         }
 
-        List<ScoreInfo> setList = new ArrayList<ScoreInfo>();
-        List<ScoreInfo> removeList = new ArrayList<ScoreInfo>();
+        List<ScoreInfo> setList = new ArrayList<>();
+        List<ScoreInfo> removeList = new ArrayList<>();
 
         for (long id : this.modified) {
             if (this.scores.containsKey(id)) {
@@ -104,9 +103,7 @@ public class Objective {
                 si.objective = this.name;
                 si.score = score.value;
                 si.name = score.name;
-                if (score != null) {
-                    setList.add(si);
-                }
+                setList.add(si);
             } else {
                 ScoreInfo si = new ScoreInfo();
                 si.scoreId = id;
@@ -132,20 +129,24 @@ public class Objective {
             }
         }
 
-        List<SetScorePacket> packets = new ArrayList<SetScorePacket>();
+        List<SetScorePacket> packets = new ArrayList<>();
 
         if (!removeList.isEmpty()) {
-            SetScorePacket pk = new SetScorePacket();
-            pk.action = SetScorePacket.Action.REMOVE;
-            pk.infos = removeList;
-            packets.add(pk);
+            for (ScoreInfo info : removeList) {
+                SetScorePacket pk = new SetScorePacket();
+                pk.action = SetScorePacket.Action.REMOVE;
+                pk.infos = new ArrayList<ScoreInfo>(){{add(info);}};
+                packets.add(pk);
+            }
         }
 
         if (!setList.isEmpty()) {
-            SetScorePacket pk = new SetScorePacket();
-            pk.action = SetScorePacket.Action.SET;
-            pk.infos = setList;
-            packets.add(pk);
+            for (ScoreInfo info : setList) {
+                SetScorePacket pk = new SetScorePacket();
+                pk.action = SetScorePacket.Action.SET;
+                pk.infos = new ArrayList<ScoreInfo>(){{add(info);}};
+                packets.add(pk);
+            }
         }
 
         return packets;
@@ -160,7 +161,7 @@ public class Objective {
             return null;
         }
 
-        List<ScoreInfo> infos = new ArrayList<ScoreInfo>();
+        List<ScoreInfo> infos = new ArrayList<>();
 
         for (Score score : this.scores.values()) {
             ScoreInfo si = new ScoreInfo();

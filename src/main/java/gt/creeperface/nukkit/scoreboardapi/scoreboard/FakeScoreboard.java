@@ -13,24 +13,24 @@ import java.util.List;
  */
 public class FakeScoreboard implements Scoreboard {
 
-    private Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<Player>();
+    private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
 
     public DisplayObjective objective;
 
     @Override
     public void update() {
+        List<SetScorePacket> pks = objective.objective.getChanges();
+
+        if (!pks.isEmpty()) {
+            for (SetScorePacket pk : pks) {
+                Server.broadcastPacket(players.values(), pk);
+            }
+        }
+
         if (objective.objective.needResend) {
             for (Player p : players.values()) {
                 this.despawnFrom(p);
                 this.spawnTo(p);
-            }
-        } else {
-            List<SetScorePacket> pks = objective.objective.getChanges();
-
-            if (!pks.isEmpty()) {
-                for (SetScorePacket pk : pks) {
-                    Server.broadcastPacket(players.values(), pk);
-                }
             }
         }
 
